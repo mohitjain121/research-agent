@@ -1,7 +1,7 @@
 from typing import List, Optional
 from langchain_core.messages import SystemMessage, HumanMessage
 
-from models.proposals import TopicRoutingProposal
+from agent.models.proposals import TopicRoutingProposal
 
 
 NEW_TOPIC_PROMPT = """

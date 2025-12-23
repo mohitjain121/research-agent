@@ -1,9 +1,9 @@
 from typing import Optional, List
 from datetime import datetime, timezone
 
-from config.env import supabase
-from models.memory import TopicMemory
-from models.proposals import MemoryUpdateProposal
+from agent.config.env import supabase
+from agent.models.memory import TopicMemory
+from agent.models.proposals import MemoryUpdateProposal
 
 
 SECTION_TO_COLUMN = {

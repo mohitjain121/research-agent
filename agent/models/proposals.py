@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from models.memory import SchemaSection
+from agent.models.memory import SchemaSection
 
 
 @dataclass

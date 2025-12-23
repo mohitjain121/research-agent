@@ -1,4 +1,4 @@
-from db.proposals import log_accepted_proposal, log_rejected_proposal
+from agent.db.proposals import log_accepted_proposal, log_rejected_proposal
 
 
 def review_proposal(proposal) -> str:

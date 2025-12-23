@@ -1,7 +1,7 @@
 from typing import Optional, Tuple, Set
 from langchain_core.messages import SystemMessage, HumanMessage
 
-from db.topics import fetch_topics_by_vertical
+from agent.db.topics import fetch_topics_by_vertical
 
 
 EXISTING_TOPIC_ROUTING_PROMPT = """

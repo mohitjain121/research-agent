@@ -1,5 +1,5 @@
 from typing import List, Dict
-from config.env import supabase
+from agent.config.env import supabase
 
 
 def fetch_topics_by_vertical(vertical: str) -> List[Dict]:

@@ -1,4 +1,4 @@
-from config.env import supabase
+from agent.config.env import supabase
 
 
 def log_accepted_proposal(proposal) -> None:

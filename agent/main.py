@@ -1,16 +1,17 @@
-from config.env import model
+from agent.config.env import model
 
-from routing.topic_router import route_article_to_topic
-from routing.new_topic import build_topic_update
+from agent.routing.topic_router import route_article_to_topic
+from agent.routing.new_topic import build_topic_update
 
-from db.topics import fetch_topics_by_vertical
-from db.topic_memory import load_topic_memory
+from agent.db.topics import fetch_topics_by_vertical
+from agent.db.topic_memory import load_topic_memory
 
-from memory_update.heuristics import identify_schema_sections
-from memory_update.section_select import chosen_schema_section
-from memory_update.rewrite import build_memory_update
+from agent.memory_update.heuristics import identify_schema_sections
+from agent.memory_update.section_select import chosen_schema_section
+from agent.memory_update.rewrite import build_memory_update
 
-from review.human_review import handle_proposal
+from agent.review.human_review import handle_proposal
+
 
 
 def run_article_ingestion(

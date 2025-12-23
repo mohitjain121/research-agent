@@ -1,7 +1,7 @@
 from langchain_core.messages import SystemMessage, HumanMessage
 
-from models.memory import SchemaSection, TopicMemory
-from models.proposals import MemoryUpdateProposal
+from agent.models.memory import SchemaSection, TopicMemory
+from agent.models.proposals import MemoryUpdateProposal
 
 
 SECTION_REWRITE_PROMPT = """

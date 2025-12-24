@@ -24,7 +24,7 @@ def create_topic(topic_id: str, topic_name: str, vertical: str) -> str:
         "vertical": vertical
     }).execute()
 
-    from db.topic_memory import initialize_topic_memory
+    from agent.db.topic_memory import initialize_topic_memory
     initialize_topic_memory(topic_id)
 
     return topic_id

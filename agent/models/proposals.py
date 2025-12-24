@@ -21,7 +21,7 @@ WHY:
 """
 
     def apply(self) -> None:
-        from db.topics import create_topic
+        from agent.db.topics import create_topic
         import uuid
 
         topic_id = str(uuid.uuid4())

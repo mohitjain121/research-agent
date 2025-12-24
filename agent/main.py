@@ -10,8 +10,7 @@ from agent.memory_update.heuristics import identify_schema_sections
 from agent.memory_update.section_select import chosen_schema_section
 from agent.memory_update.rewrite import build_memory_update
 
-from agent.review.human_review import handle_proposal
-
+from agent.db.pending import log_pending_proposal
 
 
 def run_article_ingestion(
@@ -45,7 +44,7 @@ def run_article_ingestion(
         )
 
         if topic_proposal:
-            handle_proposal(topic_proposal)
+            log_pending_proposal(topic_proposal)
 
         return
 
@@ -84,4 +83,4 @@ def run_article_ingestion(
     )
 
     # 7. Human review
-    handle_proposal(proposal)
+    log_pending_proposal(proposal)

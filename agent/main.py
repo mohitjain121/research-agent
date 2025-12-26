@@ -44,12 +44,21 @@ def run_article_ingestion(
         )
 
         if topic_proposal:
-            log_pending_proposal(topic_proposal)
+            pending_id  = log_pending_proposal(topic_proposal)
 
             import asyncio
             from agent.ui.telegram.notifier import notify_new_proposal
 
-            asyncio.create_task(notify_new_proposal(topic_proposal))
+            try:
+                loop = asyncio.get_running_loop()
+            except RuntimeError:
+                loop = None
+
+            if loop and loop.is_running():
+                loop.create_task(notify_new_proposal(topic_proposal, pending_id))
+            else:
+                asyncio.run(notify_new_proposal(topic_proposal, pending_id))
+
 
         return
 
@@ -88,11 +97,19 @@ def run_article_ingestion(
     )
 
     # 7. Human review
-    log_pending_proposal(proposal)
+    pending_id = log_pending_proposal(proposal)
 
     # 8. Notify UI (async, non-blocking)
     import asyncio
     from agent.ui.telegram.notifier import notify_new_proposal
 
-    asyncio.create_task(notify_new_proposal(proposal))
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = None
+
+    if loop and loop.is_running():
+        loop.create_task(notify_new_proposal(proposal, pending_id))
+    else:
+        asyncio.run(notify_new_proposal(proposal, pending_id))
 

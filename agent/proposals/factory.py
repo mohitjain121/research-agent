@@ -1,5 +1,5 @@
 from agent.models.memory import SchemaSection
-from agent.routing.topic_router import TopicRoutingProposal
+from agent.models.proposals import TopicRoutingProposal
 from agent.models.proposals import MemoryUpdateProposal
 
 

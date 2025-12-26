@@ -35,6 +35,16 @@ WHY:
             "confidence_reason": self.confidence_reason,
             "source_link": self.source_link,
         }
+    
+    def ui_summary(self) -> str:
+        return (
+            "📌 Proposal Type: Topic Routing\n"
+            f"🆕 Suggested Topic: {self.suggested_topic_name}\n"
+            f"📂 Vertical: {self.vertical}\n"
+            f"🔗 Source:{self.source_link}\n"
+            f"🧠 Rationale:{self.confidence_reason}"
+    )
+
 
 
 @dataclass
@@ -60,6 +70,9 @@ NEW:
 
 WHY:
 {self.why_this_matters}
+
+LINK:
+{self.source_link}
 """
 
     def apply(self) -> None:

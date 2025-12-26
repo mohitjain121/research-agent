@@ -46,6 +46,11 @@ def run_article_ingestion(
         if topic_proposal:
             log_pending_proposal(topic_proposal)
 
+            import asyncio
+            from agent.ui.telegram.notifier import notify_new_proposal
+
+            asyncio.create_task(notify_new_proposal(proposal))
+
         return
 
     # 3. Load topic memory
@@ -84,3 +89,10 @@ def run_article_ingestion(
 
     # 7. Human review
     log_pending_proposal(proposal)
+
+    # 8. Notify UI (async, non-blocking)
+    import asyncio
+    from agent.ui.telegram.notifier import notify_new_proposal
+
+    asyncio.create_task(notify_new_proposal(proposal))
+

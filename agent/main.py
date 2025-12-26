@@ -49,7 +49,7 @@ def run_article_ingestion(
             import asyncio
             from agent.ui.telegram.notifier import notify_new_proposal
 
-            asyncio.create_task(notify_new_proposal(proposal))
+            asyncio.create_task(notify_new_proposal(topic_proposal))
 
         return
 

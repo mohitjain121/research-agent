@@ -21,3 +21,12 @@ def review_and_apply_proposal(proposal, pending_id: str) -> None:
         log_rejected_proposal(proposal, reason)
 
     delete_pending_proposal(pending_id)
+
+def apply_review_decision(proposal, pending_id: str, decision: str, reason: str | None):
+    if decision == "approve":
+        proposal.apply()
+        log_accepted_proposal(proposal)
+    else:
+        log_rejected_proposal(proposal, reason or "")
+
+    delete_pending_proposal(pending_id)

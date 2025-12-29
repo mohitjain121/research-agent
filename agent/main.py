@@ -44,7 +44,16 @@ def run_article_ingestion(
         )
 
         if topic_proposal:
-            pending_id  = log_pending_proposal(topic_proposal)
+            log_pending_proposal(topic_proposal)
+
+            from agent.db.pending import fetch_pending_proposals
+
+            pending_rows = fetch_pending_proposals()
+            pending_id = next(
+                row["id"] for row in pending_rows
+                if row["source_link"] == proposal.source_link
+            )
+
 
             import asyncio
             from agent.ui.telegram.notifier import notify_new_proposal
@@ -97,7 +106,13 @@ def run_article_ingestion(
     )
 
     # 7. Human review
-    pending_id = log_pending_proposal(proposal)
+    log_pending_proposal(proposal)
+
+    pending_rows = fetch_pending_proposals()
+    pending_id = next(
+                row["id"] for row in pending_rows
+                if row["source_link"] == proposal.source_link
+            )
 
     # 8. Notify UI (async, non-blocking)
     import asyncio

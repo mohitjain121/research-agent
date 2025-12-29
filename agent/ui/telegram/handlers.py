@@ -5,12 +5,14 @@ from agent.ui.telegram.buttons import resolved_keyboard
 
 from agent.db.pending import fetch_pending_proposals
 from agent.proposals.factory import build_proposal_from_row
-from agent.review.handler import review_and_apply_proposal
+from agent.review.handler import apply_review_decision
 
 # chat_id -> proposal_id awaiting rejection reason
 AWAITING_REJECTION_REASON: dict[int, str] = {}
 
 async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    print("BUTTON HANDLER HIT:", update.callback_query.data)
+
     query = update.callback_query
     await query.answer()
 
@@ -27,7 +29,9 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
     action, proposal_id = data.split(":")
 
     # 1️⃣ Load pending proposal from DB
-    pending_rows = fetch_pending_proposals(proposal_id=proposal_id)
+    pending_rows = fetch_pending_proposals()
+    pending_rows = [row for row in pending_rows if row["id"] == proposal_id]
+
 
     if not pending_rows:
         await query.answer(
@@ -43,11 +47,12 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # APPROVE: immediate
     if action == "approve":
-        review_and_apply_proposal(
+        apply_review_decision(
             proposal=proposal,
+            pending_id=proposal_id,
             decision="approve",
             rejection_reason=None,
-        )
+        )       
 
         await query.edit_message_reply_markup(
             reply_markup=resolved_keyboard("approved")
@@ -102,8 +107,9 @@ async def handle_rejection_reason(update: Update, context: ContextTypes.DEFAULT_
     proposal_row = pending_rows[0]
     proposal = build_proposal_from_row(proposal_row)
 
-    review_and_apply_proposal(
+    apply_review_decision(
         proposal=proposal,
+        pending_id=proposal_id,
         decision="reject",
         rejection_reason=text,
     )

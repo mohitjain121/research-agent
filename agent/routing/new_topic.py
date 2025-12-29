@@ -26,6 +26,12 @@ Rules:
 - Be conservative: only propose a new topic if necessary
 - Do NOT propose multiple topics
 
+Rules for a NEW topic, your explanation must:
+
+- Explicitly name the closest existing topic(s)
+- Explain why the article cannot reasonably be included there
+- Describe the distinct conceptual boundary of the new topic
+
 Output format (follow exactly):
 
 DECISION: <NO_NEW_TOPIC or NEW_TOPIC>

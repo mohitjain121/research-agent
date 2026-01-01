@@ -2,12 +2,16 @@
 
 An autonomous AI agent that continuously discovers new information, proposes structured knowledge updates, and incorporates human-in-the-loop review via Telegram.
 
+> **Project Status:** This project is being archived. It served as a proof-of-concept for autonomous knowledge discovery with human oversight. Future exploration will continue in a forked repository with modified use cases.
+
+---
+
 ## What this agent does
 
 This agent runs as a background knowledge worker:
 
 1. **Discovers new content**
-   - Pulls articles from RSS feeds by vertical (AI, startups, etc.)
+   - Pulls articles from curated RSS feeds across verticals (AI, tech, crypto, business, finance, startups)
    - Deduplicates previously seen sources
 
 2. **Analyzes and reasons**
@@ -29,74 +33,155 @@ The result is a system that **learns with oversight**, instead of blindly updati
 
 ---
 
-## Architecture overview
+## Project Structure
 
-- **Discovery layer**  
-  Fetches and dispatches new content (RSS, feeds).
+```
+research-agent/
+├── run_discovery.py              # Entry point - fetches feeds & triggers pipeline
+├── agent/
+│   ├── config.py                 # Environment config, LLM setup, Supabase client
+│   ├── db.py                     # Database operations (topics, proposals, memory)
+│   ├── models.py                 # Pydantic models for proposals
+│   ├── routing.py                # Topic routing & new topic proposal logic
+│   ├── memory.py                 # Memory section detection & update building
+│   ├── pipeline.py               # Main article ingestion orchestration
+│   ├── discovery/
+│   │   ├── dispatcher.py         # Deduplicates & dispatches items to pipeline
+│   │   └── sources/
+│   │       ├── feeds.py          # Curated RSS feed configuration by vertical
+│   │       └── rss.py            # RSS feed fetcher
+│   └── ui/
+│       └── telegram/
+│           ├── bot.py            # Telegram bot setup
+│           └── handlers.py       # Approval/rejection handlers
+└── .github/
+    └── workflows/
+        └── run-agent.yml         # GitHub Actions scheduled runner
+```
 
-- **Routing & proposal layer**  
-  Decides whether content maps to an existing topic or requires a new one.
+---
 
-- **Persistence layer (Supabase)**  
-  Stores topics, pending proposals, accepted updates, and rejections.
+## Feed Verticals
 
-- **Review layer**  
-  Clean separation between:
-  - CLI review (legacy / manual)
-  - Telegram-based review (current primary UI)
+The discovery layer pulls from curated sources across these verticals:
 
-- **UI layer (Telegram bot)**  
-  Acts as the primary interface for reviewing and applying proposals.
+| Vertical | Focus Areas |
+|----------|-------------|
+| **ai** | arXiv papers, OpenAI, DeepMind, Google AI, Berkeley AI Research |
+| **tech** | Hacker News, Lobsters, Pragmatic Engineer, engineering blogs |
+| **crypto** | Vitalik, Paradigm, a16z Crypto, Messari, The Block |
+| **business** | HBR, Stratechery, Benedict Evans, McKinsey |
+| **finance** | a16z, Bloomberg, macro/market analysis |
+| **startups** | Paul Graham, YC, First Round Review, Lenny's Newsletter |
+
+Feed configuration: `agent/discovery/sources/feeds.py`
+
+---
+
+## How it works
+
+```
+run_discovery.py
+      │
+      ▼
+┌─────────────────┐
+│  RSS Fetcher    │  Pulls from curated feeds by vertical
+│  (sources/rss)  │
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   Dispatcher    │  Deduplicates, skips seen sources
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│    Pipeline     │  Routes → Memory update → Proposal
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Telegram Bot   │  Notifies, handles approve/reject
+└─────────────────┘
+```
+
+---
+
+## Setup
+
+### Requirements
+
+- Python 3.11+
+- Supabase account (for persistence)
+- Telegram bot token
+- Groq API key (or swap LLM provider in `config.py`)
+
+### Environment Variables
+
+```env
+SUPABASE_URL=your_supabase_url
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+GROQ_API_KEY=your_groq_api_key
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
+```
+
+### Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+### Running
+
+```bash
+# Run discovery for all verticals
+python run_discovery.py
+
+# Or run for specific verticals (in code)
+# run_discovery(["ai", "startups"])
+```
+
+---
+
+## Architecture Decisions
+
+- **Flat module structure** - Consolidated from nested folders for simplicity
+- **Hard vertical assignment** - RSS feeds are pre-tagged by vertical, no classification needed
+- **Human-in-the-loop by default** - All proposals require explicit approval
+- **Supabase for persistence** - Topics, proposals, and memory stored externally
+- **Telegram as primary UI** - Lightweight, mobile-friendly review interface
 
 ---
 
 ## Why this exists
 
-Most “AI agents” either:
-- fully automate memory updates (unsafe), or
-- require constant manual intervention (unscalable).
+Most "AI agents" either:
+- Fully automate memory updates (unsafe), or
+- Require constant manual intervention (unscalable)
 
 This project explores a **middle ground**:
-> autonomous discovery + structured reasoning + lightweight human control.
+> Autonomous discovery + structured reasoning + lightweight human control
 
 It is designed to evolve toward higher autonomy over time, grounded in feedback.
 
 ---
 
-## Current status
+## Limitations & Future Work
 
-- ✅ End-to-end pipeline working
-- ✅ Telegram-based approval flow
-- ✅ Explicit proposal lifecycle (pending → accepted / rejected)
-- ✅ Clean separation of concerns (discovery, routing, review, UI)
+This proof-of-concept demonstrated the core loop but has known limitations:
 
+- **Feed quality varies** - Some RSS feeds may be stale or low-signal, training this agent for my usecases will take lot of time via Human in the Loop learning.
+- **Research is not linear accumulation** - It’s branching, contradictory, contextual, and often non-improving. Memory updates aren't serving that purpose. It could come in useful for fields like finance, legal, regulations, internal work documentation etc where things evolve / update linearly over time. This works for facts and perhaps I will come back to this later to explore other usecases.
+
+
+Future iterations (in forked repo) may explore:
+- Multi-source discovery (Twitter/X, newsletters, APIs)
+- Nodes and edges - ideas, claims, hypotheses, observations; supports, contradicts, extends, reframes
+- Rejection-based prompt tuning
+- Simpler schema for better learning
 ---
 
-## Work in progress / next steps
+## Notes
 
-This is an active project. Planned improvements include:
-
-- **Learning from rejection**
-  - Aggregate rejection reasons
-  - Detect patterns by proposal type, schema section, and source
-  - Feed signals back into prompts and heuristics
-
-- **Improved routing heuristics**
-  - Reduce unnecessary new-topic proposals
-  - Stronger schema matching before LLM invocation
-
-- **Discovery quality control**
-  - Source-level quality scoring
-  - Feed fatigue detection
-  - Gradual exploration instead of blind breadth
-
-- **Additional review surfaces**
-  - GitHub Issues as an audit trail
-  - Digest-style notifications
-
-- **Observability**
-  - Proposal metrics
-  - Review latency
-  - Acceptance / rejection ratios
-
-Autonomy modes (auto-apply, per-source trust) will only be introduced **after** learning loops are in place.
+This served as a great project to ship an agent incorporating a varied amount of tools and resources. Its good for learning. The new fork will experiment with usecases that might come in handy, perhaps.

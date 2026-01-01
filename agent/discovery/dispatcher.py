@@ -1,7 +1,7 @@
 from typing import Dict, List
 
-from agent.main import run_article_ingestion
-from agent.db.dedup import has_seen_source
+from agent.pipeline import run_article_ingestion
+from agent.db import has_seen_source
 
 
 def dispatch_items(items: List[Dict]) -> None:

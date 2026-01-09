@@ -2,8 +2,6 @@
 
 An autonomous AI agent that continuously discovers new information, proposes structured knowledge updates, and incorporates human-in-the-loop review via Telegram.
 
-> **Project Status:** This project is being archived. It served as a proof-of-concept for autonomous knowledge discovery with human oversight. Future exploration will continue in a forked repository with modified use cases.
-
 ---
 
 ## What this agent does
@@ -167,21 +165,11 @@ It is designed to evolve toward higher autonomy over time, grounded in feedback.
 
 ---
 
-## Limitations & Future Work
+## Future Work
 
-This proof-of-concept demonstrated the core loop but has known limitations:
-
-- **Feed quality varies** - Some RSS feeds may be stale or low-signal, training this agent for my usecases will take lot of time via Human in the Loop learning.
-- **Research is not linear accumulation** - It’s branching, contradictory, contextual, and often non-improving. Memory updates aren't serving that purpose. It could come in useful for fields like finance, legal, regulations, internal work documentation etc where things evolve / update linearly over time. This works for facts and perhaps I will come back to this later to explore other usecases.
-
-
-Future iterations (in forked repo) may explore:
-- Multi-source discovery (Twitter/X, newsletters, APIs)
+Future iterations may explore:
 - Nodes and edges - ideas, claims, hypotheses, observations; supports, contradicts, extends, reframes
 - Rejection-based prompt tuning
 - Simpler schema for better learning
 ---
 
-## Notes
-
-This served as a great project to ship an agent incorporating a varied amount of tools and resources. Its good for learning. The new fork will experiment with usecases that might come in handy, perhaps.
